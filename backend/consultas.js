@@ -30,4 +30,37 @@ const registrarUsuario = async (usuario) => {
   await pool.query(consulta, values);
 };
 
-module.exports = { pool, registrarUsuario };
+const verificarCredenciales = async (email, password) => {
+
+  const consulta = "SELECT * FROM usuarios WHERE email = $1";
+
+  const values = [email];
+
+  const { rows: [usuario], rowCount } = await pool.query(
+    consulta,
+    values
+  );
+
+  if (!rowCount) {
+    throw {
+      code: 401,
+      message: "Email o contraseña incorrecta"
+    };
+  }
+
+  const passwordEsCorrecta = bcrypt.compareSync(
+    password,
+    usuario.password
+  );
+
+  if (!passwordEsCorrecta) {
+    throw {
+      code: 401,
+      message: "Email o contraseña incorrecta"
+    };
+  }
+
+  return usuario;
+};
+
+module.exports = { pool, registrarUsuario, verificarCredenciales };

@@ -1,7 +1,10 @@
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 
-const {registrarUsuario} = require("./consultas");
+
+const {registrarUsuario, verificarCredenciales} = require("./consultas");
+
 
 const app = express();
 
@@ -32,4 +35,33 @@ app.post("/usuarios", async (req, res) => {
     res.status(500).send(error);
 
   }
+});
+
+app.post("/login", async (req, res) => {
+
+  try {
+
+    const { email, password } = req.body;
+
+    await verificarCredenciales(email, password);
+
+    const token = jwt.sign(
+      { email },
+      "mi_llave_secreta"
+    );
+
+    res.json({
+      token
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(error.code || 500).json({
+      message: error.message || "Error del servidor"
+    });
+
+  }
+
 });
