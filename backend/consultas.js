@@ -63,4 +63,17 @@ const verificarCredenciales = async (email, password) => {
   return usuario;
 };
 
-module.exports = { pool, registrarUsuario, verificarCredenciales };
+const obtenerUsuario = async (email) => {
+
+  const consulta = `
+    SELECT email, rol, lenguage
+    FROM usuarios
+    WHERE email = $1
+  `;
+
+  const { rows } = await pool.query(consulta, [email]);
+
+  return rows;
+};
+
+module.exports = { pool, registrarUsuario, verificarCredenciales, obtenerUsuario };
