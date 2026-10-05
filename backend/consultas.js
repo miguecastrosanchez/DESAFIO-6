@@ -56,7 +56,7 @@ const verificarCredenciales = async (email, password) => {
   if (!passwordEsCorrecta) {
     throw {
       code: 401,
-      message: "Email o contraseña incorrecta"
+      message: "Email o contraseña incorrecta, intenta de nuevo"
     };
   }
 
